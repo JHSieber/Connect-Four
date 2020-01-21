@@ -16,6 +16,13 @@ PLAYER2 = 2
 
 color = PLAYER1
 
+RED = (216,31,42)
+BLUE = (0,33,203)
+BLACK = (0,0,0)
+WHITE = (255,255,255)
+
+RADIUS = int(BOX/2 -5)
+
 win = pygame.display.set_mode((canvasWidth, canvasHeight)) #creates the surface for everything to be drawn on
 pygame.display.set_caption("Connect Four")  #sets the name of the window
 
@@ -42,7 +49,18 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
 
+            if event.type == pygame.MOUSEMOTION:
+                pygame.draw.rect(win, BLACK, (0,0,canvasWidth, BOX))
+                mx = event.pos[0]
+                if color == PLAYER1:
+                    pygame.draw.circle(win, BLUE, (mx, int(BOX/2)), RADIUS)
+                else:
+                    pygame.draw.circle(win, RED, (mx, int(BOX/2)), RADIUS)
+
+            pygame.display.update()
+
             if event.type == pygame.MOUSEBUTTONDOWN:
+                pygame.draw.rect(win, BLACK, (0,0,canvasWidth, BOX))
         #if pygame.mouse.get_pressed()[0]:
                 if color == PLAYER1 :
 
@@ -53,9 +71,9 @@ def main():
                         positions, position = makeTurn(positions, col)
                         drawMove(color, position)
 
-                        won, win = winner(positions, color)
+                        won, res = winner(positions, color)
                         if won:
-                            print(win, "is the winner")
+                            print(res, "is the winner")
                             run = False
 
                 else:
@@ -67,9 +85,9 @@ def main():
                         positions, position = makeTurn(positions, col)
                         drawMove(color, position)
 
-                        won, win = winner(positions, color)
+                        won, res = winner(positions, color)
                         if won:
-                            print(win, "is the winner")
+                            print(res, "is the winner")
                             run = False
 
 
@@ -82,13 +100,13 @@ def main():
 def drawMove(color, position):
 
     if color == PLAYER1:
-        co = 216,31,42
+        co = RED
     else:
-        co = 0,33,203
+        co = BLUE
     column, row = position
     drawX = int((column*2+1)*canvasWidth/14)
     drawY = int((row*2+1)*canvasWidth/12)
-    pygame.draw.circle(win, co, (int(column*BOX+BOX/2), int(row*BOX+BOX+BOX/2)), int(BOX/2-5), 0)
+    pygame.draw.circle(win, co, (int(column*BOX+BOX/2), int(row*BOX+BOX+BOX/2)), RADIUS, 0)
 
 def makeTurn(positions, col): #had to change some stuff so if something doesnt work it may be here
     global color
@@ -181,8 +199,8 @@ def makeBoard():
     run = True
     for c in range(COLS):
         for r in range(ROWS):
-            pygame.draw.rect(win, (255,255,255), (c*BOX, r*BOX+BOX, BOX, BOX))
-            pygame.draw.circle(win, (0,0,0), (int(c*BOX+BOX/2), int(r*BOX+BOX+BOX/2)), int(BOX/2-5))
+            pygame.draw.rect(win, WHITE, (c*BOX, r*BOX+BOX, BOX, BOX))
+            pygame.draw.circle(win, BLACK, (int(c*BOX+BOX/2), int(r*BOX+BOX+BOX/2)), RADIUS)
     pygame.display.update()
 
 def winner(positions, color):
