@@ -35,8 +35,8 @@ def checkDownLeft(positions, row, col, color):
         return 1 + checkDownLeft(positions, row+1, col-1, color) #recurse with the next cell
     else: #either the current cell is empty or the current cell does not equal the next cell
         return 1
-    
-    
+
+
 def checkUpLeft(positions, row, col, color):
     if col < 1 or row < 1:
         return 1
@@ -44,7 +44,7 @@ def checkUpLeft(positions, row, col, color):
         return 1 + checkUpLeft(positions, row-1, col-1, color)
     else:
         return 1
-    
+
 def checkUpRight(positions, row, col, color):
     if col > 5 or row < 1:
         return 1
@@ -52,7 +52,7 @@ def checkUpRight(positions, row, col, color):
         return 1 + checkUpRight(positions, row-1, col+1, color)
     else:
         return 1
-    
+
 def checkDownRight(positions, row, col, color):
     if col > 5 or row > 4:
         return 1
@@ -60,7 +60,7 @@ def checkDownRight(positions, row, col, color):
         return 1 + checkDownRight(positions, row+1, col+1, color)
     else:
         return 1
-    
+
 def checkUp(positions, row, col, color):
     if row < 1:
         return 1
@@ -68,7 +68,7 @@ def checkUp(positions, row, col, color):
         return 1 + checkUp(positions, row-1, col, color)
     else:
         return 1
-    
+
 def checkDown(positions, row, col, color):
     if row > 4:
         return 1
@@ -76,7 +76,7 @@ def checkDown(positions, row, col, color):
         return 1 + checkDown(positions, row+1, col, color)
     else:
         return 1
-    
+
 def checkRight(positions, row, col, color):
     if col > 5:
         return 1
@@ -84,7 +84,7 @@ def checkRight(positions, row, col, color):
         return 1 + checkRight(positions, row, col+1, color)
     else:
         return 1
-    
+
 def checkLeft(positions, row, col, color):
     if col < 1:
         return 1
@@ -92,5 +92,5 @@ def checkLeft(positions, row, col, color):
         return 1 + checkLeft(positions, row, col-1, color)
     else:
         return 1
-    
+
 main()
