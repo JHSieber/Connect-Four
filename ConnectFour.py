@@ -26,6 +26,11 @@ RADIUS = int(BOX/2 -5)
 win = pygame.display.set_mode((canvasWidth, canvasHeight)) #creates the surface for everything to be drawn on
 pygame.display.set_caption("Connect Four")  #sets the name of the window
 
+#Helper function to create text Objects
+def textObjects(text, font, hue):
+    textSurface = font.render(text, True, hue)
+    return textSurface, textSurface.get_rect()
+
 def isValidMove(board, col):
     return board[0][col] == 0
 
@@ -39,12 +44,10 @@ def main():
     #         positions[i].append(' ')
     positions = np.zeros((ROWS,COLS))
     run = True
-
+    res = -1
     won = False
-    #win = 'red'
-    while run:
-        #pygame.time.delay(100)
 
+    while run:
         for event in pygame.event.get(): #allows us to quit when we hit the close button
             if event.type == pygame.QUIT:
                 run = False
@@ -53,15 +56,15 @@ def main():
                 pygame.draw.rect(win, BLACK, (0,0,canvasWidth, BOX))
                 mx = event.pos[0]
                 if color == PLAYER1:
-                    pygame.draw.circle(win, BLUE, (mx, int(BOX/2)), RADIUS)
-                else:
                     pygame.draw.circle(win, RED, (mx, int(BOX/2)), RADIUS)
+                else:
+                    pygame.draw.circle(win, BLUE, (mx, int(BOX/2)), RADIUS)
 
             pygame.display.update()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pygame.draw.rect(win, BLACK, (0,0,canvasWidth, BOX))
-        #if pygame.mouse.get_pressed()[0]:
+
                 if color == PLAYER1 :
 
                     mouseX = event.pos[0] #gets the current x and y of the mouse
@@ -76,6 +79,7 @@ def main():
                             print(res, "is the winner")
                             run = False
 
+                        color = PLAYER2
                 else:
 
                     mouseX = event.pos[0] #gets the current x and y of the mouse
@@ -90,12 +94,23 @@ def main():
                             print(res, "is the winner")
                             run = False
 
+                        color = PLAYER1
 
                 pygame.display.update()
+    if won:
+        mediumText = pygame.font.SysFont("comicsansms", 75)
 
-    # make the initiol board
-    # initialize a 2D array of 6 by 7
-    # fill the array with empty strings
+        if res == 1:
+            textSurf, textRect = textObjects("Player 1 wins!", mediumText, RED)
+            textRect.center = ( (canvasWidth/2), (BOX/2) )
+            win.blit(textSurf, textRect)
+            pygame.time.wait(3000)
+
+        else:
+            textSurf, textRect = textObjects("Player 2 wins!", mediumText, BLUE)
+            textRect.center = ( (canvasWidth/2), (BOX/2) )
+            win.blit(textSurf, textRect)
+            pygame.time.wait(3000)
 
 def drawMove(color, position):
 
@@ -115,88 +130,13 @@ def makeTurn(positions, col): #had to change some stuff so if something doesnt w
         if positions[i][col] == 0: #check if there is already one there
             positions[i][col] = color #fill spot in array with correct color
             position = col, i #save the column and the row of the most recent move to draw
-            if color == PLAYER1: #alternate colors
-                color = PLAYER2
-            else:
-                color = PLAYER1
             return positions, position #return updated variables
         else:
             continue
-    # if mouseX > canvasWidth/COLS and mouseX < 2*canvasWidth/COLS: #second Column
-    #     for i in range(ROWS-1,-1,-1):
-    #         if positions[i][1] == 0:
-    #             positions[i][1] = color
-    #             position = 1, i
-    #             if color == PLAYER1:
-    #                 color = PLAYER2
-    #             else:
-    #                 color = PLAYER1
-    #             return color, positions, position
-    #         else:
-    #             continue
-    # if mouseX > 2*canvasWidth/COLS and mouseX < 3*canvasWidth/COLS: #third column
-    #     for i in range(ROWS-1,-1,-1):
-    #         if positions[i][2] == 0:
-    #             positions[i][2] = color
-    #             position = 2, i
-    #             if color == PLAYER1:
-    #                 color = PLAYER2
-    #             else:
-    #                 color = PLAYER1
-    #             return color, positions, position
-    #         else:
-    #             continue
-    # if mouseX > 3*canvasWidth/COLS and mouseX < 4*canvasWidth/COLS: #fourth column
-    #     for i in range(ROWS-1,-1,-1):
-    #         if positions[i][3] == 0:
-    #             positions[i][3] = color
-    #             position = 3, i
-    #             if color == PLAYER1:
-    #                 color = PLAYER2
-    #             else:
-    #                 color = PLAYER1
-    #             return color, positions, position
-    #         else:
-    #             continue
-    # if mouseX > 4*canvasWidth/COLS and mouseX < 5*canvasWidth/COLS: #fifth column
-    #     for i in range(ROWS-1,-1,-1):
-    #         if positions[i][4] == 0:
-    #             positions[i][4] = color
-    #             position = 4, i
-    #             if color == PLAYER1:
-    #                 color = PLAYER2
-    #             else:
-    #                 color = PLAYER1
-    #             return color, positions, position
-    #         else:
-    #             continue
-    # if mouseX > 5*canvasWidth/COLS and mouseX < 6*canvasWidth/COLS: #sixth column
-    #     for i in range(ROWS-1,-1,-1):
-    #         if positions[i][5] == 0:
-    #             positions[i][5] = color
-    #             position = 5, i
-    #             if color == PLAYER1:
-    #                 color = PLAYER2
-    #             else:
-    #                 color = PLAYER1
-    #             return color, positions, position
-    #         else:
-    #             continue
-    # if mouseX > 6*canvasWidth/COLS and mouseX < canvasWidth: #seventh column
-    #     for i in range(ROWS-1,-1,-1):
-    #         if positions[i][ROWS] == 0:
-    #             positions[i][ROWS] = color
-    #             position = ROWS, i
-    #             if color == PLAYER1:
-    #                 color = PLAYER2
-    #             else:
-    #                 color = PLAYER1
-    #             return color, positions, position
-    #         else:
-    #             continue
 
 def makeBoard():
     run = True
+    #win.fill(WHITE)
     for c in range(COLS):
         for r in range(ROWS):
             pygame.draw.rect(win, WHITE, (c*BOX, r*BOX+BOX, BOX, BOX))
@@ -226,12 +166,23 @@ def winner(positions, color):
                     if total == 4:
                         return True, color
 
+    # Check positively sloped diaganols
+    for c in range(COLS-3):
+        for r in range(ROWS-3):
+            if positions[r][c] == color and positions[r+1][c+1] == color and positions[r+2][c+2] == color and positions[r+3][c+3] == color:
+                return True, color
+
+    # Check negatively sloped diaganols
+    for c in range(COLS-3):
+        for r in range(3, ROWS):
+            if positions[r][c] == color and positions[r-1][c+1] == color and positions[r-2][c+2] == color and positions[r-3][c+3] == color:
+                return True, color
     #check for diagonal left
-    for i in range(5,2,-1): #checks bottom 3 rows
-        for j in range (3,COLS): #checks right 4 columns
-            #print(checkUpLeft(positions, i, j))
-            if checkUpLeft(positions, i, j) == 4:
-                return True, positions[i][j]
+    # for i in range(5,2,-1): #checks bottom 3 rows
+    #     for j in range (3,COLS): #checks right 4 columns
+    #         #print(checkUpLeft(positions, i, j))
+    #         if checkUpLeft(positions, i, j) == 4:
+    #             return True, positions[i][j]
     return False, 0
 
 def checkUpLeft(positions, row, col):
