@@ -19,7 +19,7 @@ color = PLAYER1
 RED = (216,31,42)
 BLUE = (0,33,203)
 BLACK = (0,0,0)
-WHITE = (255,255,255)
+YELLOW = (255,255,0)
 
 RADIUS = int(BOX/2 -5)
 
@@ -37,12 +37,12 @@ def isValidMove(board, col):
 def main():
     global color
     makeBoard()
-    # positions = []
-    # for i in range(ROWS):
-    #     positions.append([])
-    #     for j in range(COLS):
-    #         positions[i].append(' ')
-    positions = np.zeros((ROWS,COLS))
+    positions = []
+    for i in range(ROWS): #create 3d array with rows and columns
+        positions.append([])
+        for j in range(COLS):
+            positions[i].append(0)
+    #positions = np.zeros((ROWS,COLS))
     run = True
     res = -1
     won = False
@@ -50,7 +50,7 @@ def main():
     while run:
         for event in pygame.event.get(): #allows us to quit when we hit the close button
             if event.type == pygame.QUIT:
-                run = False
+                quitGame()
 
             if event.type == pygame.MOUSEMOTION:
                 pygame.draw.rect(win, BLACK, (0,0,canvasWidth, BOX))
@@ -58,7 +58,7 @@ def main():
                 if color == PLAYER1:
                     pygame.draw.circle(win, RED, (mx, int(BOX/2)), RADIUS)
                 else:
-                    pygame.draw.circle(win, BLUE, (mx, int(BOX/2)), RADIUS)
+                    pygame.draw.circle(win, YELLOW, (mx, int(BOX/2)), RADIUS)
 
             pygame.display.update()
 
@@ -70,7 +70,6 @@ def main():
                     mouseX = event.pos[0] #gets the current x and y of the mouse
                     col = int(math.floor(mouseX/BOX))
                     if isValidMove(positions, col):
-
                         positions, position = makeTurn(positions, col)
                         drawMove(color, position)
 
@@ -91,33 +90,36 @@ def main():
 
                         won, res = winner(positions, color)
                         if won:
-                            print(res, "is the winner")
+                            mediumText = pygame.font.SysFont("comicsansms", 75)
+                            if res == 1:
+                                print("red")
+                                textSurf, textRect = textObjects("Player 1 wins!", mediumText, RED)
+                                textRect.center = ( (canvasWidth/2), (BOX/2) )
+                                win.blit(textSurf, textRect)
+                                pygame.display.update()
+                                pygame.time.wait(3000)
+                    
+                            else:
+                                print("blue")
+                                textSurf, textRect = textObjects("Player 2 wins!", mediumText, BLUE)
+                                textRect.center = ( (canvasWidth/2), (BOX/2) )
+                                win.blit(textSurf, textRect)
+                                pygame.display.update()
+                                pygame.time.wait(3000)
                             run = False
+                            #endScreen
 
                         color = PLAYER1
 
                 pygame.display.update()
-    if won:
-        mediumText = pygame.font.SysFont("comicsansms", 75)
-
-        if res == 1:
-            textSurf, textRect = textObjects("Player 1 wins!", mediumText, RED)
-            textRect.center = ( (canvasWidth/2), (BOX/2) )
-            win.blit(textSurf, textRect)
-            pygame.time.wait(3000)
-
-        else:
-            textSurf, textRect = textObjects("Player 2 wins!", mediumText, BLUE)
-            textRect.center = ( (canvasWidth/2), (BOX/2) )
-            win.blit(textSurf, textRect)
-            pygame.time.wait(3000)
+        
 
 def drawMove(color, position):
 
     if color == PLAYER1:
         co = RED
     else:
-        co = BLUE
+        co = YELLOW
     column, row = position
     drawX = int((column*2+1)*canvasWidth/14)
     drawY = int((row*2+1)*canvasWidth/12)
@@ -136,10 +138,10 @@ def makeTurn(positions, col): #had to change some stuff so if something doesnt w
 
 def makeBoard():
     run = True
-    #win.fill(WHITE)
+    win.fill(BLACK)
     for c in range(COLS):
         for r in range(ROWS):
-            pygame.draw.rect(win, WHITE, (c*BOX, r*BOX+BOX, BOX, BOX))
+            pygame.draw.rect(win, BLUE, (c*BOX, r*BOX+BOX, BOX, BOX))
             pygame.draw.circle(win, BLACK, (int(c*BOX+BOX/2), int(r*BOX+BOX+BOX/2)), RADIUS)
     pygame.display.update()
 
@@ -207,6 +209,64 @@ def horizontalWin(positions):
                 return True, positions[i][j]
     return False, ''
 
+# def textObjects(text, font):
+#     textSurface = font.render(text, True, (0,0,0))
+#     return textSurface, textSurface.get_rect()
+
+#Helper function to create button functionality
+def button(msg,x,y,w,h,ic,ac,action=None):
+    global gameMode
+
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+
+    if x+w > mouse[0] > x and y+h > mouse[1] > y:
+        pygame.draw.rect(win, ac,(x,y,w,h))
+        if click[0] == 1 and action != None:
+            #print(action)
+            gameMode = action
+            action()
+    else:
+        pygame.draw.rect(win, ic,(x,y,w,h))
+
+    smallText = pygame.font.SysFont("comicsansms",20)
+    textSurf, textRect = textObjects(msg, smallText, BLUE)
+    textRect.center = ( (x+(w/2)), (y+(h/2)) )
+    win.blit(textSurf, textRect)
+
+def quitGame():
+    pygame.quit()
+    quit()
+    
+clock = pygame.time.Clock()    
 
 
-main()
+def intro():
+    intro = True
+    #image = pygame.image.load("bg.png")
+    #imgRect = image.get_rect()
+    #imgRect.left, imgRect.top = 44,44
+
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quitGame()
+        
+        win.fill((228,233,244))
+        #screen.blit(image, imgRect)
+        largeText = pygame.font.SysFont("comicsansms",100)
+        TextSurf, TextRect = textObjects("Connect Four", largeText, RED)
+        TextRect.center = ((canvasWidth/2),100)
+        win.blit(TextSurf, TextRect)
+
+        #button("Solo",(canvasWidth/2 - 50),250,100,50,(0, 255, 0),(0, 200, 0),solo)
+        button("Duo",(canvasWidth/2 - 50),350,100,50,(0, 255, 0),(0, 200, 0),main)
+        button("Quit", (canvasWidth/2 - 50), 450, 100, 50, (255,0,0), (200,0,0), quitGame)
+        
+        pygame.display.update()
+        clock.tick(30)
+
+    
+
+intro()
+#main()
